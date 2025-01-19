@@ -8,7 +8,10 @@ CEND="${CSI}0m"
 CRED="${CSI}1;31m"
 CGREEN="${CSI}1;32m"
 
-cd /flarum/app
+cd /flarum/app || {
+  echo "[ERROR] Cannot cd to /flarum/app"
+  exit 1
+}
 
 # Composer cache dir and packages list paths
 CACHE_DIR=/flarum/app/extensions/.cache
@@ -18,6 +21,9 @@ LIST_FILE=/flarum/app/extensions/list
 action="${1}"
 package="${2}"
 
+UID=${UID:-$(id -u)}
+GID=${GID:-$(id -g)}
+
 # Create custom extensions cache folder and list file
 su-exec "${UID}:${GID}" mkdir -p "${CACHE_DIR}"
 su-exec "${UID}:${GID}" touch "${LIST_FILE}"
@@ -26,23 +32,25 @@ case "${action}" in
   # Install a flarum extension
   "require")
     COMPOSER_CACHE_DIR="${CACHE_DIR}" su-exec "${UID}:${GID}" composer require "${package}"
+    # shellcheck disable=SC2181
     if [ $? -eq 0 ]; then
       echo "${package}" >> "${LIST_FILE}"
-      echo -e "\n${CGREEN}${package} added to flarum.${CEND}"
+      printf "\n%s added to flarum.%s\n" "${CGREEN}${package}" "${CEND}"
       # Remove duplicate packages
       sort -u -o "${LIST_FILE}" "${LIST_FILE}"
     else
-      echo -e "\n${CRED}/!\ An error has occurred...${CEND}"
+      printf "\n%s/!\ An error has occurred...%s\n" "${CRED}" "${CEND}"
     fi
     ;;
   # Remove a flarum extension
   "remove")
     COMPOSER_CACHE_DIR="$CACHE_DIR" su-exec "${UID}:${GID}" composer remove "${package}"
+    # shellcheck disable=SC2181
     if [ $? -eq 0 ]; then
       sed -i "\|${package}|d" "$LIST_FILE"
-      echo -e "\n${CGREEN}${package} removed from flarum${CEND}"
+      printf "\n%s removed from flarum%s\n" "${CGREEN}${package}" "${CEND}"
     else
-      echo -e "\n${CRED}/!\ An error has occurred...${CEND}"
+      printf "\n%s/!\ An error has occurred...%s" "${CRED}" "${CEND}"
     fi
     ;;
   "list")

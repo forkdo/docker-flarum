@@ -1,35 +1,32 @@
-# mondedie/flarum
+# forkdo/flarum
 
 ![logo](https://i.imgur.com/Bjrtbsc.png)
 
-[![](https://github.com/mondediefr/docker-flarum/workflows/build/badge.svg)](https://github.com/mondediefr/docker-flarum/actions)
-[![](https://img.shields.io/docker/pulls/mondedie/flarum)](https://hub.docker.com/r/mondedie/flarum)
-[![](https://img.shields.io/docker/stars/mondedie/flarum)](https://hub.docker.com/r/mondedie/flarum)
+[![](https://github.com/forkdo/docker-flarum/workflows/build/badge.svg)](https://github.com/forkdo/docker-flarum/actions)
+[![](https://img.shields.io/docker/pulls/forkdo/flarum)](https://hub.docker.com/r/forkdo/flarum)
+[![](https://img.shields.io/docker/stars/forkdo/flarum)](https://hub.docker.com/r/forkdo/flarum)
 
 ### Tag available
 
- - **latest** [(Dockerfile)](https://github.com/mondediefr/docker-flarum/blob/master/Dockerfile)
- - **stable** [(Dockerfile)](https://github.com/mondediefr/docker-flarum/blob/master/Dockerfile)
- - **1.0.2** [(Dockerfile)](https://github.com/mondediefr/docker-flarum/blob/1.0.2/Dockerfile)
- - **1.2.0** [(Dockerfile)](https://github.com/mondediefr/docker-flarum/blob/1.2.0/Dockerfile)
+ - **latest** [(Dockerfile)](https://github.com/forkdo/docker-flarum/blob/main/Dockerfile)
 
 ### Features
 
-- Multi-platform image: `linux/386`, `linux/amd64`, `linux/arm/v6`, `linux/arm/v7`, `linux/arm64`
+- Multi-platform image: `linux/arm64`
 - Lightweight & secure image
-- Based on Alpine Linux 3.16
-- **nginx** and **PHP 8.0**
-- Latest [Flarum Framework](https://github.com/flarum/framework) (v1.3.0)
+- Based on Alpine Linux 3.21
+- **nginx** and **PHP 8.3**
+- Latest [Flarum Framework](https://github.com/flarum/framework) (v1.8.x)
 - MySQL/Mariadb driver
 - OPCache extension configured
 
 ### Build-time variables
 
-- **VERSION** = Version of [flarum/flarum](https://github.com/flarum/flarum) skeleton (default: *v1.3.0*)
+- **VERSION** = Version of [flarum/flarum](https://github.com/flarum/flarum) skeleton (default: *v1.8.x*)
 
 ### Ports
 
-- Default: **8888** (configurable)
+- Default: **80** (configurable)
 
 ### Volume
 
@@ -52,7 +49,7 @@
 | **DB_PASS** | MariaDB database password | **required** | none
 | **DB_PREF** | Flarum tables prefix | *optional* | none
 | **DB_PORT** | MariaDB database port | *optional* | 3306
-| **FLARUM_PORT** | Port to run Flarum on inside the container | *optional* | 8888
+| **FLARUM_PORT** | Port to run Flarum on inside the container | *optional* | 80
 | **UPLOAD_MAX_SIZE** | The maximum size of an uploaded file | *optional* | 50M
 | **PHP_MEMORY_LIMIT** | PHP memory limit | *optional* | 128M |
 | **OPCACHE_MEMORY_LIMIT** | OPcache memory size in megabytes | *optional* | 128
@@ -75,20 +72,21 @@
 
 ```bash
 # Pull from hub.docker.com :
-docker pull mondedie/flarum:latest
+docker pull forkdo/flarum:latest
+
+# Pull from ghcr.io
+docker pull ghcr.io/forkdo/flarum:latest
 
 # or build it manually :
-docker build -t mondedie/flarum:latest https://github.com/mondediefr/docker-flarum.git
+docker build -t forkdo/flarum:latest https://github.com/forkdo/docker-flarum.git
 ```
 
 #### 2 - Docker-compose.yml
 
 ```yml
-version: "3"
-
 services:
   flarum:
-    image: mondedie/flarum:stable
+    image: forkdo/flarum:stable
     container_name: flarum
     env_file:
       - /mnt/docker/flarum/flarum.env
@@ -98,7 +96,7 @@ services:
       - /mnt/docker/flarum/storage/logs:/flarum/app/storage/logs
       - /mnt/docker/flarum/nginx:/etc/nginx/flarum
     ports:
-      - 80:8888
+      - 80:80
     depends_on:
       - mariadb
 
@@ -118,7 +116,7 @@ services:
 
 You need a reverse proxy to access flarum, this is not described here. You can use the solution of your choice (Traefik, Nginx, Apache, Haproxy, Caddy, H2O...etc).
 
-Create a environment file (see docker-compose: /mnt/docker/flarum/flarum.env [here](https://github.com/mondediefr/docker-flarum/tree/master#2---docker-composeyml))
+Create a environment file (see docker-compose: /mnt/docker/flarum/flarum.env [here](https://github.com/forkdo/docker-flarum/tree/main#2---docker-composeyml))
 
 ```
 # vi /mnt/docker/flarum/flarum.env
@@ -158,11 +156,9 @@ docker-compose up -d flarum
 ### Install additional php extensions
 
 ```yml
-version: "3"
-
 services:
   flarum:
-    image: mondedie/flarum:stable
+    image: forkdo/flarum:stable
     container_name: flarum
     environment:
       - PHP_EXTENSIONS=gmp session brotli
@@ -173,12 +169,12 @@ services:
       - /mnt/docker/flarum/nginx:/etc/nginx/flarum
 ```
 
-This example install php8-gmp php8-session and php8-brotli with apk  
-You can find a php extension here https://pkgs.alpinelinux.org/packages?name=php8-*&branch=v3.13&arch=x86_64
+This example install php83-gmp php83-session with apk  
+You can find a php extension here https://pkgs.alpinelinux.org/packages?name=php83-*&branch=v3.21&arch=x86_64
 
 ### Install custom extensions
 
-**Flarum extensions list :** https://flagrow.io/extensions
+**Flarum extensions list :** https://flarum.org/extensions
 
 #### Install an extension
 
@@ -246,8 +242,8 @@ https://getcomposer.org/doc/03-cli.md#modifying-repositories
 
 ### Guide for upgrade your flarum container
 
-See the instructions [here](https://github.com/mondediefr/docker-flarum/blob/master/UPGRADE.md)
+See the instructions [here](https://github.com/forkdo/docker-flarum/blob/master/UPGRADE.md)
 
 ## License
 
-Docker image [mondedie/flarum](https://hub.docker.com/r/mondedie/flarum) is released under [MIT License](https://github.com/mondediefr/docker-flarum/blob/master/LICENSE).
+Docker image [forkdo/flarum](https://hub.docker.com/r/forkdo/flarum) is released under [MIT License](https://github.com/forkdo/docker-flarum/blob/master/LICENSE).

@@ -1,9 +1,9 @@
-FROM alpine:3.16
+FROM alpine:3.21
 
 LABEL description="Simple forum software for building great communities" \
-      maintainer="Magicalex <magicalex@mondedie.fr>"
+      maintainer="Jetsung Chan <jetsungchan@gmail.com>"
 
-ARG VERSION=v1.3.0
+ARG VERSION=v1.8.0
 
 ENV GID=991 \
     UID=991 \
@@ -18,7 +18,9 @@ ENV GID=991 \
     DEBUG=false \
     LOG_TO_STDOUT=false \
     GITHUB_TOKEN_AUTH=false \
-    FLARUM_PORT=8888
+    FLARUM_PORT=80
+
+# apk search php8 | awk -F'-' '{print $1}' | uniq | grep php | tail -n 1
 
 RUN apk add --no-progress --no-cache \
     curl \
@@ -26,43 +28,45 @@ RUN apk add --no-progress --no-cache \
     icu-data-full \
     libcap \
     nginx \
-    php8 \
-    php8-ctype \
-    php8-curl \
-    php8-dom \
-    php8-exif \
-    php8-fileinfo \
-    php8-fpm \
-    php8-gd \
-    php8-gmp \
-    php8-iconv \
-    php8-intl \
-    php8-mbstring \
-    php8-mysqlnd \
-    php8-opcache \
-    php8-pecl-apcu \
-    php8-openssl \
-    php8-pdo \
-    php8-pdo_mysql \
-    php8-phar \
-    php8-session \
-    php8-tokenizer \
-    php8-xmlwriter \
-    php8-zip \
-    php8-zlib \
+    php83 \
+    php83-ctype \
+    php83-curl \
+    php83-dom \
+    php83-exif \
+    php83-fileinfo \
+    php83-fpm \
+    php83-gd \
+    php83-gmp \
+    php83-iconv \
+    php83-intl \
+    php83-mbstring \
+    php83-mysqlnd \
+    php83-opcache \
+    php83-pecl-apcu \
+    php83-openssl \
+    php83-pdo \
+    php83-pdo_mysql \
+    php83-phar \
+    php83-session \
+    php83-tokenizer \
+    php83-xmlwriter \
+    php83-zip \
+    php83-zlib \
     su-exec \
     s6 \
   && cd /tmp \
   && curl --progress-bar http://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
-  && sed -i 's/memory_limit = .*/memory_limit = ${PHP_MEMORY_LIMIT}/' /etc/php8/php.ini \
+  && sed -i "s/memory_limit = .*/memory_limit = ${PHP_MEMORY_LIMIT}/" /etc/php83/php.ini \
   && chmod +x /usr/local/bin/composer \
   && mkdir -p /run/php /flarum/app \
-  && COMPOSER_CACHE_DIR="/tmp" composer create-project flarum/flarum:$VERSION /flarum/app \
+  && COMPOSER_CACHE_DIR="/tmp" composer create-project "flarum/flarum:^$VERSION" /flarum/app \
   && composer clear-cache \
   && rm -rf /flarum/.composer /tmp/* \
-  && setcap CAP_NET_BIND_SERVICE=+eip /usr/sbin/nginx
+  && setcap CAP_NET_BIND_SERVICE=+eip /usr/sbin/nginx \
+  && ln -s /usr/sbin/php-fpm83 /usr/sbin/php-fpm8 \
+  && ln -s /usr/bin/s6-svscan /bin/s6-svscan
 
 COPY rootfs /
-RUN chmod +x /usr/local/bin/* /etc/s6.d/*/run /etc/s6.d/.s6-svscan/*
+RUN chmod +x /usr/local/bin/* /etc/s6.d/*/* /etc/s6.d/.s6-svscan/*
 VOLUME /etc/nginx/flarum /flarum/app/extensions /flarum/app/public/assets /flarum/app/storage/logs
 CMD ["/usr/local/bin/startup"]
