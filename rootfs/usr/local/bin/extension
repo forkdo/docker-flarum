@@ -62,6 +62,6 @@ case "${action}" in
     ;;
 esac
 
-su-exec "${UID}:${GID}" php /flarum/app/flarum cache:clear
+su-exec "${UID}:${GID}" php84 /flarum/app/flarum cache:clear
 
 exit 0

@@ -12,10 +12,10 @@
 
 ### Features
 
-- Multi-platform image: `linux/arm64`
+- Multi-platform image: `linux/amd64,linux/arm64`
 - Lightweight & secure image
 - Based on Alpine Linux 3.21
-- **nginx** and **PHP 8.3**
+- **nginx** and **PHP 8.4**
 - Latest [Flarum Framework](https://github.com/flarum/framework) (v1.8.x)
 - MySQL/Mariadb driver
 - OPCache extension configured
@@ -169,8 +169,8 @@ services:
       - /mnt/docker/flarum/nginx:/etc/nginx/flarum
 ```
 
-This example install php83-gmp php83-session with apk  
-You can find a php extension here https://pkgs.alpinelinux.org/packages?name=php83-*&branch=v3.21&arch=x86_64
+This example install php84-gmp php84-session with apk  
+You can find a php extension here https://pkgs.alpinelinux.org/packages?name=php84-*&branch=v3.21&arch=x86_64
 
 ### Install custom extensions
 
