@@ -6,6 +6,9 @@ on:
       - main
       - dev
 
+env:
+  package_name: "flarum"
+
 jobs:
   docker:
     name: Docker Build and Push
@@ -24,7 +27,7 @@ jobs:
       - name: Check Docker Hub Credentials
         id: check_docker_creds
         run: |
-          if [[ -n "${{ secrets.DOCKER_USER }}" && -n "${{ secrets.DOCKER_TOKEN }}" ]]; then
+          if [[ -n "${{ secrets.DOCKERHUB_USERNAME }}" && -n "${{ secrets.DOCKERHUB_TOKEN }}" ]]; then
             echo "docker_creds_exist=true" >> $GITHUB_OUTPUT
           else
             echo "docker_creds_exist=false" >> $GITHUB_OUTPUT
@@ -59,8 +62,8 @@ jobs:
           # Docker Hub tags (if credentials provided)
           if [[ "${{ github.ref_name }}" == "main" ]]; then
             if [[ "${{ steps.check_docker_creds.outputs.docker_creds_exist }}" == "true" ]]; then
-              echo "DOCKER_REPO=docker.io/$IMAGE_REPO" >> $GITHUB_OUTPUT
               TARGET="all"
+              echo "DOCKER_REPO=docker.io/$IMAGE_REPO" >> $GITHUB_OUTPUT
             fi
           fi
           echo "TARGET=$TARGET" >> $GITHUB_ENV
