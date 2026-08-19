@@ -5,22 +5,22 @@
 :warning: Backup your database, config.php, composer.lock and assets folder  
 :warning: Disable all 3rd party extensions prior to upgrading in panel admin.
 
-1 - Update your docker-compose file, see an example [here](#2---docker-composeyml)
+1 - Update your docker composefile, see an example [here](#2---docker-composeyml)
 
 ```yml
 services:
   flarum:
-    image: idevsig/flarum:1.8.9
+    image: forkdo/flarum:1.8.14
     ...
 ```
 
 2 - Pull the last docker images
 
 ```sh
-docker pull idevsig/flarum:1.8.9
-docker-compose stop flarum
-docker-compose rm flarum
-docker-compose up -d flarum
+docker pull forkdo/flarum:1.8.14
+docker composestop flarum
+docker composerm flarum
+docker composeup -d flarum
 ```
 
 3 - Updating your database and removing old assets & extensions

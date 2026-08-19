@@ -20,6 +20,16 @@
 - MySQL/Mariadb driver
 - OPCache extension configured
 
+### Local Development
+```bash
+docker buildx bake \
+  -f ./docker-bake.hcl \
+  --push=false \
+  --no-cache \
+  dev
+```
+
+
 ### Build-time variables
 
 - **VERSION** = Version of [flarum/flarum](https://github.com/flarum/flarum) skeleton (default: *v1.8.x*)
@@ -169,8 +179,8 @@ services:
       - /mnt/docker/flarum/nginx:/etc/nginx/flarum
 ```
 
-This example install php84-gmp php84-session with apk  
-You can find a php extension here https://pkgs.alpinelinux.org/packages?name=php84-*&branch=v3.21&arch=x86_64
+This example install php85-gmp php85-session with apk  
+You can find a php extension here https://pkgs.alpinelinux.org/packages?name=php85-*&branch=v3.21&arch=x86_64
 
 ### Install custom extensions
 

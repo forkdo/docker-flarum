@@ -1,0 +1,39 @@
+[project]
+site_name = "Flarum Docker"
+site_url = "https://docker-flarum.ooos.top/"
+site_description = "forkdo/flarum 是一个基于 Alpine Linux 的轻量、安全的 Flarum 论坛 Docker 镜像，内置 nginx 与 PHP-FPM，支持多平台。"
+site_author = "forkdo"
+copyright = "Copyright &copy; forkdo"
+docs_dir = "docs"
+site_dir = "site"
+repo_url = "https://github.com/forkdo/docker-flarum"
+repo_name = "forkdo/docker-flarum"
+edit_uri = "edit/main/docs/"
+
+nav = [
+  { "首页" = "index.md" },
+  { "快速开始" = "quickstart.md" },
+  { "环境变量与配置" = "configuration.md" },
+  { "扩展管理" = "extensions.md" },
+  { "升级 Flarum" = "upgrade.md" },
+  { "进阶配置" = "advanced.md" },
+  { "GitHub 仓库" = "https://github.com/forkdo/docker-flarum" }
+]
+
+[project.theme]
+language = "zh"
+variant = "classic"
+features = [
+  "navigation.instant",
+  "navigation.tabs",
+  "navigation.top",
+  "navigation.footer",
+  "content.action.edit",
+  "content.action.view",
+  "search.highlight"
+]
+
+[project.theme.palette]
+scheme = "default"
+primary = "indigo"
+accent = "indigo"

@@ -15,7 +15,7 @@ target "_image" {
 
 target "_common" {
     labels = {
-        "org.opencontainers.image.source" = "https://github.com/forkdo/docker-flarumc"
+        "org.opencontainers.image.source" = "https://github.com/forkdo/docker-flarum"
         "org.opencontainers.image.documentation" = "https://github.com/forkdo/docker-flarum"
         "org.opencontainers.image.authors" = "Jetsung Chan<i@jetsung.com>"
     }
