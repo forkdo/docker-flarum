@@ -83,6 +83,14 @@ FLARUM_TITLE=My Flarum Forum
 
 > 请务必修改所有 `change_me_*` 占位符为强密码。
 
+> :warning: 若你的 `/mnt/docker/flarum/assets` 目录是空的（如恢复备份、迁移数据卷），容器会误判为首次安装并反复重启。已有数据库时，先手动创建标记文件再启动：
+>
+> ```bash
+> touch /mnt/docker/flarum/assets/._flarum-installed.lock
+> ```
+>
+> 判断机制详见[环境变量与配置详解](./configuration.md)。
+
 ## 5. 启动服务
 
 ```bash
@@ -108,6 +116,28 @@ http://domain.tld
 ```
 
 使用 `FLARUM_ADMIN_USER` / `FLARUM_ADMIN_PASS` 登录后台。
+
+## 使用外部数据库（不部署 mariadb）
+
+如果你的 MySQL 运行在**独立的 compose 栈**或**外部宿主机**上（不需要本教程中的 mariadb 服务），按如下方式调整：
+
+1. **compose 只定义 flarum 服务**，去掉 `mariadb` 服务及其 `depends_on`。
+2. **数据库可达性**取决于部署位置：
+   - 同一宿主机、独立 mysql 栈（通过宿主机端口暴露 3306）：`DB_HOST=host.docker.internal`，并为 flarum 添加 `extra_hosts`：
+     ```yml
+     services:
+       flarum:
+         extra_hosts:
+           - host.docker.internal:host-gateway
+     ```
+   - 远程宿主机：`DB_HOST=<该主机 IP 或域名>`。
+   - 共享同一外部 Docker 网络：`DB_HOST=mysql`（对方服务名），两栈都加入该网络。
+3. **flarum.env 数据库变量**指向外部库：`DB_HOST`、`DB_PORT`、`DB_NAME`、`DB_USER`、`DB_PASS`、`DB_PREF` 均需与外部库实际配置一致（详见[环境变量与配置详解](./configuration.md)）。
+4. **启动前确认**外部库已就绪；若库中已有数据（迁移/恢复场景），还需先在 assets 目录创建标记文件，避免被误判为首次安装：
+
+   ```bash
+   touch /mnt/docker/flarum/assets/._flarum-installed.lock
+   ```
 
 ## 常见问题
 

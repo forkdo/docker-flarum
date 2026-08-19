@@ -37,6 +37,26 @@
 
 > :warning: 管理员密码（`FLARUM_ADMIN_PASS`）**至少需要 8 个字符**，否则首次安装会失败。
 
+### 镜像如何判断 Flarum 是否已安装过
+
+容器启动时，`startup` 脚本通过检查以下两个文件之一是否存在，来判断 Flarum 是否已安装（详见 `rootfs/usr/local/bin/startup`）：
+
+| 标记文件 | 说明 |
+| ---- | ---- |
+| `/flarum/app/public/assets/rev-manifest.json` | Flarum 安装时生成的前端资源清单 |
+| `/flarum/app/public/assets/._flarum-installed.lock` | 首次安装成功时脚本自动创建的空标记文件 |
+
+- **任一文件存在** → 判定为已安装，跳过安装，直接生成 `config.php` 并启动。
+- **都不存在** → 判定为首次安装，需要提供 `FLARUM_ADMIN_*` 变量，否则报错退出。
+
+> :warning: **注意挂载空目录的坑**：如果把 `/flarum/app/public/assets` 挂载到一个空的宿主机目录（例如恢复备份、迁移数据卷），标记文件不存在，容器会被误判为首次安装，从而要求管理员变量并反复重启。此时：
+> 1. 若数据库已有数据（迁移/恢复场景），手动创建标记文件即可跳过安装：
+>    ```bash
+>    touch /srv/flarum/assets/._flarum-installed.lock
+>    docker compose restart flarum
+>    ```
+> 2. 若确实是全新安装，则正常填写 `FLARUM_ADMIN_*` 变量即可，安装成功后脚本会自动创建标记文件。
+
 ## 变量详解
 
 ### FORUM_URL（必填）
@@ -49,6 +69,27 @@
 - `DB_PASS`：数据库密码，**必填**，需与 MariaDB 容器的 `MYSQL_PASSWORD` 保持一致。
 - `DB_PREF`：表前缀，例如 `flarum_`。留空则不使用前缀。
 - `DB_PORT`：默认 `3306`。
+
+#### 数据库不在本栈内（外部 MySQL / 独立 mysql 栈）的情况
+
+快速开始中的示例将数据库作为同栈内的 `mariadb` 服务一并部署。如果你的 MySQL 运行在**独立的 compose 栈**或**外部宿主机**上，需要额外注意：
+
+1. **DB_HOST 指向数据库可达地址**，常见三种：
+   - 同一台宿主机、独立栈的 MySQL（通过宿主机端口映射暴露 3306）：`DB_HOST=host.docker.internal`，并在 compose 中为 flarum 服务添加 `extra_hosts`：
+     ```yml
+     services:
+       flarum:
+         extra_hosts:
+           - host.docker.internal:host-gateway
+     ```
+   - 另一台宿主机 / 远程数据库：`DB_HOST=<该主机的 IP 或域名>`（需保证网络可达、3306 端口已放行）。
+   - 两个栈共享同一外部 Docker 网络（如 `sharenet`）：`DB_HOST=mysql`（或对方服务名），并把两个栈都加入该网络。
+2. **数据库账号与权限**：`DB_USER` / `DB_PASS` 使用外部 MySQL 中对该库有权限的账号（如 `root` 或专用账号），需与外部库的实际凭据一致。
+3. **库与表前缀**：确认外部库中已创建 `DB_NAME` 指定的数据库，且表前缀（`DB_PREF`）与已有数据一致；若是从备份恢复的库，注意表前缀必须匹配（例如备份中表名为 `bbs_posts`，则 `DB_PREF=bbs_`）。
+4. **不需要同栈数据库服务**：此时 compose 中只需 flarum 一个服务，无需 `depends_on` 数据库，也不要定义 `mariadb` 服务。
+5. **首次启动前**确认外部库已就绪（库已创建、数据已恢复），否则容器可能因连不上库而反复重启。
+
+> 若外部库已有数据（迁移/恢复场景），还需按前文「镜像如何判断 Flarum 是否已安装过」创建标记文件，避免被误判为首次安装。
 
 ### 性能相关变量
 
