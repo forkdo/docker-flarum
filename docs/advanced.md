@@ -24,7 +24,7 @@ services:
 
 你可以在 Alpine 包仓库查找可用的 PHP 扩展：
 
-[https://pkgs.alpinelinux.org/packages?name=php85-*&branch=v3.21&arch=x86_64](https://pkgs.alpinelinux.org/packages?name=php85-*&branch=v3.21&arch=x86_64)
+[https://pkgs.alpinelinux.org/packages?name=php85-*&branch=v3.24&arch=x86_64](https://pkgs.alpinelinux.org/packages?name=php85-*&branch=v3.24&arch=x86_64)
 
 > 注意：`PHP_EXTENSIONS` 是**启动时**安装的，修改后需要重建/重启容器才生效。它安装的是 PHP 运行时扩展，与 Flarum 扩展（通过 `extension` 脚本安装）是两回事。
 

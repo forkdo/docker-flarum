@@ -15,7 +15,7 @@
 ```yml
 services:
   flarum:
-    image: forkdo/flarum:1.8.14
+    image: forkdo/flarum:1.8
     # ... 其余配置保持不变
 ```
 
@@ -23,7 +23,7 @@ services:
 
 ```sh
 # 拉取新镜像
-docker pull forkdo/flarum:1.8.14
+docker pull forkdo/flarum:1.8
 
 # 停止并移除旧容器
 docker compose stop flarum

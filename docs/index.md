@@ -7,6 +7,7 @@
 ## 目录
 
 - [快速开始（docker compose + .env）](./quickstart.md)
+- [从零部署完整示例](./example.md)
 - [环境变量与配置详解](./configuration.md)
 - [安装 / 升级 / 移除 Flarum 扩展](./extensions.md)
 - [升级 Flarum 容器](./upgrade.md)

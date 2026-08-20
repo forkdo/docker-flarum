@@ -13,6 +13,7 @@ edit_uri = "edit/main/docs/"
 nav = [
   { "首页" = "index.md" },
   { "快速开始" = "quickstart.md" },
+  { "从零部署示例" = "example.md" },
   { "环境变量与配置" = "configuration.md" },
   { "扩展管理" = "extensions.md" },
   { "升级 Flarum" = "upgrade.md" },
